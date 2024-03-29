@@ -1,5 +1,22 @@
-export default {
-  port: 9090,
-  dbUri:
-    "mongodb+srv://va1ent0n:valentontonpcst3946@cluster0.6k5rwjq.mongodb.net/restapi?retryWrites=true&w=majority&appName=Cluster0",
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const MONGO_USERNAME = process.env.MONGO_USERNAME || "";
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "";
+const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.6k5rwjq.mongodb.net/std_grade`;
+
+const SERVER_PORT = process.env.SERVER_PORT
+  ? Number(process.env.SERVER_PORT)
+  : 1337;
+
+export const config = {
+  mongo: {
+    username: MONGO_USERNAME,
+    password: MONGO_PASSWORD,
+    url: MONGO_URL,
+  },
+  server: {
+    port: SERVER_PORT,
+  },
 };
