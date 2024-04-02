@@ -1,14 +1,35 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// database toolkit that makes it easier for developers to work with databases in their applications. 
+// type-safe way to interact with databases, offering features like database modeling, schema migrations, and type-safe database queries.
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+// Defines a model named.
+model Student {
+    // field      // DataType // PK // auto-generate // mapped the _id field // objectId format.
+    id            String      @id @default(auto()) @map("_id") @db.ObjectId
+    name          String
+    score         Int // stands for integer
+    grade         String? // the question mark (?) when you see grade String?, it means that the field named grade is of type String, but it's optional, meaning it can have a value or be null.
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    // A field representing a relationship with the "Information" model - It's a one-to-many relationship.
+    information   Information @relation(fields: [informationId], references: [id])
+    // It's mapped to the "_id" field of the "Information" model
+    informationId String      @db.ObjectId
+}
+
+model Information {
+    id       String    @id @default(auto()) @map("_id") @db.ObjectId
+    village  String
+    district String
+    province String
+    // representing a relationship with the "Student" model. It's a one-to-many relationship
+    Student  Student[] //  It's related to the "Student" model via the informationId field.
 }
