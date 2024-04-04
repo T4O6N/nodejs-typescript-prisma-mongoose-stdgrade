@@ -11,25 +11,88 @@ datasource db {
 }
 
 // Defines a model named.
-model Student {
-    // field      // DataType // PK // auto-generate // mapped the _id field // objectId format.
-    id            String      @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    score         Int // stands for integer
-    grade         String? // the question mark (?) when you see grade String?, it means that the field named grade is of type String, but it's optional, meaning it can have a value or be null.
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
-    // A field representing a relationship with the "Information" model - It's a one-to-many relationship.
-    information   Information @relation(fields: [informationId], references: [id])
-    // It's mapped to the "_id" field of the "Information" model
-    informationId String      @db.ObjectId
+// model Student {
+//     // field      // DataType // PK // auto-generate // mapped the _id field // objectId format.
+//     id            String      @id @default(auto()) @map("_id") @db.ObjectId
+//     name          String
+//     score         Int // stands for integer
+//     grade         String? // the question mark (?) when you see grade String?, it means that the field named grade is of type String, but it's optional, meaning it can have a value or be null.
+//     createdAt     DateTime    @default(now())
+//     updatedAt     DateTime    @updatedAt
+//     // A field representing a relationship with the "Information" model - It's a one-to-many relationship.
+//     information   Information @relation(fields: [informationId], references: [id])
+//     // It's mapped to the "_id" field of the "Information" model
+//     informationId String      @unique @db.ObjectId
+// }
+
+// model Information {
+//     id       String    @id @default(auto()) @map("_id") @db.ObjectId
+//     village  String
+//     district String
+//     province String
+//     // representing a relationship with the "Student" model. It's a one-to-many relationship
+//     Student  Student[] //  It's related to the "Student" model via the informationId field.
+// }
+
+// one to one.
+model User {
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    profile       Profile?
+    // one to many
+    orders        Order[]
+    createdBy     String?  @db.ObjectId
+    updatedBy     String?  @db.ObjectId
+    createdByUser User?    @relation("UserCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    updatedByUser User?    @relation("UserUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    createdUsers  User[]   @relation("UserCreatedBy")
+    updatedUsers  User[]   @relation("UserUpdatedBy")
 }
 
-model Information {
-    id       String    @id @default(auto()) @map("_id") @db.ObjectId
-    village  String
-    district String
-    province String
-    // representing a relationship with the "Student" model. It's a one-to-many relationship
-    Student  Student[] //  It's related to the "Student" model via the informationId field.
+model Profile {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @unique @db.ObjectId
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// one to many
+model Order {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    price     Int
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @unique @db.ObjectId
+    createdAt DateTime @updatedAt
+    updatedAt DateTime @updatedAt
+}
+
+// many to many
+model Student {
+    id        String      @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    lastname  String
+    phone     String
+    Classroom Classroom[]
+}
+
+model Teacher {
+    id        String      @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    lastname  String
+    subject   String
+    phone     String
+    Classroom Classroom[]
+}
+
+model Classroom {
+    id            String  @id @default(auto()) @map("_id") @db.ObjectId
+    classroomInfo String
+    studentId     String  @db.ObjectId
+    teacherId     String  @db.ObjectId
+    student       Student @relation(fields: [studentId], references: [id])
+    teacher       Teacher @relation(fields: [teacherId], references: [id])
 }
